@@ -1,7 +1,3 @@
-This README provides a comprehensive structure for your **LangGraph_Cleaning_segmentation** repository. It assumes a multi-agent or stateful workflow common in LangGraph projects, focusing on data cleaning (preprocessing) and segmentation (clustering or classification).
-
----
-
 # LangGraph Data Cleaning & Segmentation Pipeline
 
 This repository implements an intelligent, agentic workflow using **LangGraph** to automate the process of data cleaning and customer/data segmentation. By leveraging a state-graph architecture, the system can handle complex, non-linear tasks such as outlier detection, missing value imputation, and automated clustering with LLM-driven decision-making.
@@ -15,7 +11,7 @@ Traditional data pipelines are often rigid. This project uses **LangGraph** to c
 3. **Segment** the data using machine learning (e.g., K-Means or LLM-based categorization).
 4. **Reflect** on the results and iterate if the quality doesn't meet specific thresholds.
 
-## 🏗️ Architecture
+## Architecture
 
 The workflow is designed as a directed graph where each node represents a specific functional step:
 
