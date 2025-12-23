@@ -194,6 +194,11 @@ print(results["segments"])
 
 ## Key Features
 
+
+
+https://github.com/user-attachments/assets/c65d2215-806e-45d7-80b1-7efc2f5568ad
+
+
 * **State Persistence:** The graph maintains the state of the data across multiple cleaning iterations.
 * **Conditional Logic:** Dynamically decides whether to scale features or encode categorical variables based on data profiling.
 * **Human-in-the-Loop:** (Optional) Ability to pause the graph for human approval before final segmentation.
