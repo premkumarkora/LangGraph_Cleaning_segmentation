@@ -1,15 +1,23 @@
-# LangGraph Data Cleaning & Segmentation Pipeline
+# Agentic Data Engineering: Autonomous Self-Healing Pipelines with LangGraph
 
-This repository implements an intelligent, agentic workflow using **LangGraph** to automate the process of data cleaning and customer/data segmentation. By leveraging a state-graph architecture, the system can handle complex, non-linear tasks such as outlier detection, missing value imputation, and automated clustering with LLM-driven decision-making.
+Stop building brittle linear scripts. Start architecting deterministic state machines. This repository implements a production-grade, agentic workflow designed to automate complex data cleaning and customer segmentation tasks. Unlike traditional, rigid pipelines, this system leverages a Supervisor-Worker architecture to handle non-deterministic enterprise data with 100% stateful reliability.
 
-## Overview
+# The Principal's Perspective: Why This Matters
+In high-stakes enterprise environments—such as those in the UAE’s Financial and Energy sectors—data isn't just "messy"; it's unpredictable. Traditional pipelines fail because they lack reasoning.
 
-Traditional data pipelines are often rigid. This project uses **LangGraph** to create a cyclic, stateful workflow where an AI agent can:
+This project demonstrates a Self-Healing Data Pipeline. By utilizing a Supervisor Agent (powered by gpt-4o-mini), the system interprets data quality in real-time and "decides" whether to proceed or loop back for deeper cleaning.
 
-1. **Analyze** the raw dataset schema and quality.
-2. **Clean** the data dynamically (handling nulls, encoding, and scaling).
-3. **Segment** the data using machine learning (e.g., K-Means or LLM-based categorization).
-4. **Reflect** on the results and iterate if the quality doesn't meet specific thresholds.
+
+
+
+## Key Architectural Advantages:
+
+##### Deterministic Reliability: Uses structured system prompts and regex-based parsing to ensure strict routing, preventing "chatty" LLM drift
+
+##### Stateful Session Persistence: Powered by MemorySaver, the graph maintains the complete state of your data across multiple cleaning iterations.
+
+##### Autonomous Hand-off Protocol: Agents are programmed to report "Task Complete" and move the state forward without requiring human intervention for every step.
+
 
 ## Architecture
 
