@@ -21,6 +21,56 @@ The workflow is designed as a directed graph where each node represents a specif
 * **Evaluation Node:** Uses an LLM to interpret the clusters/segments and verify if the cleaning was successful.
 * **Router:** Directs the flow based on data quality (e.g., "Back to cleaning" or "Proceed to Final Report").
 
+graph TD
+    %% Node Definitions
+    User([User/Upload]) 
+    Streamlit[Streamlit App]
+    Supervisor{{"fa:fa-brain Supervisor Agent"}}
+    Cleaner[Cleaning Agent]
+    Cluster[Clustering Agent]
+    Visualizer[Visualization Agent]
+    UI[Trace/Reports/Plots]
+
+```mermaid
+
+graph TD
+    %% Node Definitions
+    User([User/Upload]) 
+    Streamlit[Streamlit App]
+    Supervisor{{"fa:fa-brain Supervisor Agent"}}
+    Cleaner[Cleaning Agent]
+    Cluster[Clustering Agent]
+    Visualizer[Visualization Agent]
+    UI[Trace/Reports/Plots]
+
+    %% Connections
+    User -->|CSV| Streamlit
+    Streamlit -->|Trigger| Supervisor
+    Supervisor -->|Route| Cleaner
+    Supervisor -->|Route| Cluster
+    Supervisor -->|Route| Visualizer
+    Cleaner -.->|Clean/EDA| Supervisor
+    Cluster -.->|K-Means| Supervisor
+    Visualizer -.->|Plot| Supervisor
+    Supervisor -->|Finish| Streamlit
+    Streamlit -->|Render| UI
+
+    %% Styling Classes
+    classDef userStyle fill:#f9f9f9,stroke:#333,stroke-width:2px,color:#000;
+    classDef appStyle fill:#FF4B4B,stroke:#fff,stroke-width:3px,color:#fff,font-weight:bold;
+    classDef supervisorStyle fill:#7000FF,stroke:#00E5FF,stroke-width:4px,color:#fff,font-weight:bold;
+    classDef agentStyle fill:#00E5FF,stroke:#0072FF,stroke-width:2px,color:#000;
+    classDef outputStyle fill:#FF007A,stroke:#fff,stroke-width:2px,color:#fff;
+
+    %% Applying Classes
+    class User userStyle;
+    class Streamlit appStyle;
+    class Supervisor supervisorStyle;
+    class Cleaner,Cluster,Visualizer agentStyle;
+    class UI outputStyle;
+```
+    
+
 ## Installation
 
 1. **Clone the repository:**
