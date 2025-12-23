@@ -21,15 +21,6 @@ The workflow is designed as a directed graph where each node represents a specif
 * **Evaluation Node:** Uses an LLM to interpret the clusters/segments and verify if the cleaning was successful.
 * **Router:** Directs the flow based on data quality (e.g., "Back to cleaning" or "Proceed to Final Report").
 
-graph TD
-    %% Node Definitions
-    User([User/Upload]) 
-    Streamlit[Streamlit App]
-    Supervisor{{"fa:fa-brain Supervisor Agent"}}
-    Cleaner[Cleaning Agent]
-    Cluster[Clustering Agent]
-    Visualizer[Visualization Agent]
-    UI[Trace/Reports/Plots]
 
 ```mermaid
 
@@ -70,6 +61,62 @@ graph TD
     class UI outputStyle;
 ```
     
+## Component Implementation
+
+#### Supervisor (`agents.py`)
+- **LLM:** `gpt-4o-mini`
+- **Routing Logic:** Uses a structured system prompt to decide the `next_node` based on the conversation history.
+- **Robustness:** Implements Regex-based parsing (`detected_agent`) to handle "chatty" LLM responses, ensuring strict routing even if the LLM wraps the agent name in natural language.
+- **Checklist Enforcement:** Explicitly programmed to verify that `Clustering` and `Visualization` have occurred before returning `FINISH`.
+
+### Functional Agents (`agents.py`)
+All agents (Cleaning, Clustering, Visualization) are `ReACT` agents built with `create_react_agent`.
+- **Context Injection:** The `run_specialist` wrapper injects a specific `SystemMessage` containing the **Absolute Path** of the active CSV file before every invocation.
+- **Recursion Management:** Agents operate with a local recursion limit of 50 to prevent infinite loops.
+- **Hand-off Protocol:** Agents are instructed to "Finish their turn" and report "Task Complete" rather than asking the user for input, maintaining the autonomous chain.
+
+### Tools (`tools.py`)
+- **`clean_data`**:
+  - Null Imputation: Median (numeric) / Mode (categorical).
+  - Safe Outlier Removal: Uses IQR but guarantees retention of at least 10% of data or 5 rows.
+  - Smart Paths: Handles absolute paths and prevents redundant filenames (e.g., `_cleaned_cleaned`).
+  - Column Dropping: Accepts a `drop_columns` list to act on EDA findings.
+- **`perform_eda`**:
+  - Correlation Check: Identifies pairs with >0.85 correlation.
+  - Suggestion Engine: Returns a specific list of `SUGGESTED DROPS` to the agent.
+- **`perform_clustering`**:
+  - Pipeline: `StandardScaler` -> `OneHotEncoder` -> `KMeans` -> `PCA` (2 components).
+  - Output: Saves `_clustered.csv`.
+- **`generate_visualization`**:
+  - Validation: Checks for PCA columns.
+  - Signalling: Returns a success message that triggers the Streamlit UI to render the chart.
+
+#### State Management (`state.py`)
+- **`AgentState`**: A TypedDict tracking:
+  - `messages`: List of `BaseMessage` (User/AI/Tool).
+  - `next_node`: The next agent to call.
+  - `df_path`: The **Absolute Path** to the currently active CSV file.
+
+### Persistence (`agents.py`)
+- **`MemorySaver`**: Uses in-memory checkpointing to maintain graph state across steps within a single session.
+
+### User Interface (`app.py`)
+- **Streaming Trace:** Uses `trace_placeholder` to render real-time tool calls and arguments.
+- **Agent Reports:** Filters the main chat stream to display nicely formatted Markdown reports (e.g., `### 🧹 Cleaning Report`) from agent summaries.
+- **Dynamic File Handling:** 
+  - Uses `os.path.abspath` for all file saves.
+  - Updates `st.session_state.df_path` based on agent outputs.
+- **Visualization:**
+  - Detects `_clustered.csv` to render PCA scatter plots.
+  - Detects `signals generated` to render EDA heatmaps.
+- **Export:** Provides a `st.download_button` for the final processed dataset.
+
+#### Setup & Installation
+#### Prerequisites
+- Python 3.10+
+- `uv` package manager (recommended)
+- OpenAI API Key
+
 
 ## Installation
 
